@@ -23,22 +23,12 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.all;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity testbench_vgactl is
 end testbench_vgactl;
 
 architecture model of testbench_vgactl is
     signal clk  :std_logic;
     signal rst  :std_logic;
-    signal en   :std_logic;
 
     signal COLOR  :std_logic_vector(11 downto 0);
     
@@ -51,10 +41,10 @@ architecture model of testbench_vgactl is
 begin
     -- instantiate the controller entity as dut
     dut : entity vga_controller port map
-    (clk => clk, rst => rst, en => en, RED=> RED);
+    (clk => clk, rst => rst, COLOR=> COLOR, RED=> RED, GRN => GRN, BLU=> BLU, HS => HS, VS=> VS);
 
     -- gen clk from slides
-    genclk: process is
+    genclk: process
     begin
         clk <= '1';
         wait for 5 ns;
@@ -62,14 +52,9 @@ begin
         wait for 5 ns;
     end process;
 
-    -- start off with a reset and enable cycle
-    reset <= '1', '0' after 5 ns;
-    en <= '1';
+    COLOR <= x"0F0";
 
-
-    -- once HS is high, assert that 
-
-    -- set stimulus, monitor output
-    test : process is
+    -- start off with a reset cycle
+    rst <= '1', '0' after 50 ns;
 
 end model;

@@ -54,7 +54,7 @@ architecture arch of vga_controller is
 
     -- horizontal counter
     signal hcnt : unsigned(9 downto 0);
-    signal HSpulse : std_logic; -- first HS px cycle, for VSYNC counter
+    signal hspulse : std_logic;
 
     -- vertical counter
     signal vcnt : unsigned(9 downto 0);
@@ -66,16 +66,16 @@ begin
         clk => clk,
         rst => rst,
         pulse => pulse25,
-        trig => x"4" -- 100MHz/4 => 25MHz
+        trig => x"0000003" -- 100MHz/4 => 25MHz
     );
 
 
     -- HSYNC and pixel data
     process (clk, rst)
     begin
-        if (reset = '1') then
+        if (rst = '1') then
             -- shut her down!
-            hcnt <= 0;
+            hcnt <= (others => '0');
             HS <= '0';
             RED <= x"0";
             GRN <= x"0";
@@ -85,43 +85,37 @@ begin
             -- pulse-enabled counter
             if (pulse25 = '1') then
                 hcnt <= hcnt + 1;
-                HSpulse <= '0';
 
                 -- HSYNC if tpw has passed (3.84 us = 96 ticks)
-                if (HS = '0') then
-                    
+                if (hcnt < 96) then
+                    HS <= '0';
+                    hspulse <= '0';
+                elsif (hcnt = 96) then
+                    HS <= '1';
+                    hspulse <= '1';
+                else
+                    HS <= '1';
+                    hspulse <= '0';
+                end if;
+
+                -- data if between porches and valid line (not in vertical retrace), 
+                -- else zeros
+                if (hcnt >= 96+48 and hcnt < (96+48+640) and vdisp = '1') then
+                    RED <= COLOR(11 downto 8);
+                    GRN <= COLOR(7 downto 4);
+                    BLU <= COLOR(3 downto 0);
+                else 
                     RED <= x"0";
                     GRN <= x"0";
-                    BLU <= x"0"; 
-
-                    if (hcnt < 96) then
-                        HS <= '0';
-                    else
-                        HS <= '1';
-                        HSpulse <= '1';
-                    end if;
-
-                else -- HS is 1
-
-                    -- data if between porches and valid line (not in vertical retrace), 
-                    -- else zeros
-                    if (hcnt > 96+48 and hcnt < (96+48+640) and vdisp = '1') then
-                        RED <= COLOR(11 downto 8);
-                        GRN <= COLOR(7 downto 4);
-                        BLU <= COLOR(3 downto 0);
-                    else 
-                        RED <= x"0";
-                        GRN <= x"0";
-                        BLU <= x"0";
-                    end if;
-
+                    BLU <= x"0";
                 end if;
+
 
             end if;
 
             if (hcnt >= 800) then
                 HS <= '0';
-                hcnt <= 0;
+                hcnt <= (others => '0');
             end if;
 
         end if;
@@ -129,19 +123,18 @@ begin
 
     -- VSYNC process, HSYNC-enabled counter;
     process(clk, rst)
+    begin
 
-        if (reset = '1') then
+        if (rst = '1') then
             -- shut her down!
-            vcnt <= 0;
+            vcnt <= (others => '0');
+            vdisp <= '0';
             VS <= '0';
         elsif (rising_edge(clk)) then
-
-            if (HSpulse = '1') then
-                vcnt <= vcnt + 1;
-                
-                
-                if (VS = '0') then
-
+            if (pulse25 = '1') then
+                if (hspulse = '1') then
+                    vcnt <= vcnt + 1;
+                    
                     -- vsync if tpw has passed (2 lines)
                     if (vcnt < 2 ) then
                         VS <= '0';
@@ -150,27 +143,23 @@ begin
                         VS <= '1';
                     end if;
 
-                else -- VS is 1'
-                    
                     -- vdisp when between porches, else retracing
-                    if (vcnt > (2+29) and vcnt < (2+29+480)) then
+                    if (vcnt >= (2+29) and vcnt < (2+29+480)) then
                         vdisp <= '1';
                     else
-                        vdisp <= '1';
+                        vdisp <= '0';
                     end if;
-                end if;
 
-                if (vcnt >= 521) then
-                    vcnt <= 0;
-                    VS <= '0';
-                    vdisp <= '0';
+                    if (vcnt >= 521) then
+                        vcnt <= (others => '0');
+                        VS <= '0';
+                        vdisp <= '0';
+                    end if;
+                        
                 end if;
-                    
             end if;
         end if;
 
     end process;
-
-
 
 end arch;
