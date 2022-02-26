@@ -11,7 +11,6 @@ Compiling package std.standard
 Compiling package std.textio
 Compiling package ieee.std_logic_1164
 Compiling package ieee.numeric_std
-Compiling architecture arch of entity xil_defaultlib.pulse_gen [pulse_gen_default]
 Compiling architecture arch of entity xil_defaultlib.vga_controller [vga_controller_default]
 Compiling architecture model of entity xil_defaultlib.testbench_vgactl
 Built simulation snapshot testbench_vgactl_behav

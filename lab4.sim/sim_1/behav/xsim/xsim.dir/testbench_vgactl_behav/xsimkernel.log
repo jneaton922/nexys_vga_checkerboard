@@ -1,4 +1,4 @@
-Running: xsim.dir/testbench_vgactl_behav/xsimk -simmode gui -wdb testbench_vgactl_behav.wdb -simrunnum 0 -socket 37295
+Running: xsim.dir/testbench_vgactl_behav/xsimk -simmode gui -wdb testbench_vgactl_behav.wdb -simrunnum 0 -socket 53799
 Design successfully loaded
-Design Loading Memory Usage: 31660 KB (Peak: 31780 KB)
-Design Loading CPU Usage: 10 ms
+Design Loading Memory Usage: 31672 KB (Peak: 31792 KB)
+Design Loading CPU Usage: 60 ms

@@ -95,7 +95,7 @@ begin
                 if (hcnt < 96) then
                     HS <= '0';
                     hspulse <= '0';
-                elsif (hcnt = 96) then
+                elsif (hcnt = 96) then --pulse to trigger vertical count
                     HS <= '1';
                     hspulse <= '1';
                 else
@@ -110,7 +110,7 @@ begin
                     GRN <= color(7 downto 4);
                     BLU <= color(3 downto 0);
                     
-                    px <= px + 1;
+                    px <= px + 1; -- increment pixel index
                 else 
                     RED <= x"0";
                     GRN <= x"0";
@@ -144,7 +144,8 @@ begin
 
                 color <= start_color;
 
-                if (py >= 521) then
+                if (py >= 521
+                ) then
                     py <= (others => '0');
                     start_color <= green;
                 end if;
