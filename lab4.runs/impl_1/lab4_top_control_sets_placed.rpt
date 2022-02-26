@@ -1,0 +1,86 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.2 (lin64) Build 3367213 Tue Oct 19 02:47:39 MDT 2021
+| Date         : Fri Feb 25 19:30:26 2022
+| Host         : yoshi-desktop running 64-bit Ubuntu 20.04.4 LTS
+| Command      : report_control_sets -verbose -file lab4_top_control_sets_placed.rpt
+| Design       : lab4_top
+| Device       : xc7a100t
+-------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |     8 |
+|    Minimum number of control sets                        |     8 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |    40 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |     8 |
+| >= 0 to < 4        |     1 |
+| >= 4 to < 6        |     3 |
+| >= 6 to < 8        |     0 |
+| >= 8 to < 10       |     1 |
+| >= 10 to < 12      |     1 |
+| >= 12 to < 14      |     1 |
+| >= 14 to < 16      |     0 |
+| >= 16              |     1 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |               4 |            2 |
+| No           | No                    | Yes                    |              58 |           16 |
+| No           | Yes                   | No                     |               0 |            0 |
+| Yes          | No                    | No                     |               0 |            0 |
+| Yes          | No                    | Yes                    |              42 |           16 |
+| Yes          | Yes                   | No                     |               0 |            0 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++----------------+-------------------+------------------+------------------+----------------+--------------+
+|  Clock Signal  |   Enable Signal   | Set/Reset Signal | Slice Load Count | Bel Load Count | Bels / Slice |
++----------------+-------------------+------------------+------------------+----------------+--------------+
+|  clk_IBUF_BUFG |                   | RESET_SW_IBUF    |                1 |              1 |         1.00 |
+|  clk_IBUF_BUFG |                   |                  |                2 |              4 |         2.00 |
+|  clk_IBUF_BUFG | vga/px[4]_i_1_n_0 | reset            |                2 |              5 |         2.50 |
+|  clk_IBUF_BUFG | vga/py[4]_i_1_n_0 | reset            |                2 |              5 |         2.50 |
+|  clk_IBUF_BUFG | pxclk/pulse25     | reset            |                3 |              9 |         3.00 |
+|  clk_IBUF_BUFG | vga/HS_i_1_n_0    | reset            |                4 |             11 |         2.75 |
+|  clk_IBUF_BUFG | vga/VS_i_1_n_0    | reset            |                5 |             12 |         2.40 |
+|  clk_IBUF_BUFG |                   | reset            |               15 |             57 |         3.80 |
++----------------+-------------------+------------------+------------------+----------------+--------------+
+
+

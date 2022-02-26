@@ -34,10 +34,9 @@ use IEEE.NUMERIC_STD.ALL;
 entity vga_controller is
 --  Port ( );
     Port (
-
         clk : in STD_LOGIC;
         rst : in STD_LOGIC;
-        COLOR : in STD_LOGIC_VECTOR(11 downto 0);
+        pulse25 : in std_logic;
 
         HS : out std_logic;
         VS : out std_logic;
@@ -49,8 +48,9 @@ end vga_controller;
 
 architecture arch of vga_controller is
 
-    -- 25MHZ pulse output 
-    signal pulse25 : std_logic;
+    -- color definitions
+    constant blue : std_logic_vector(11 downto 0) := x"30f";
+    constant green : std_logic_vector(11 downto 0) := x"179";
 
     -- horizontal counter
     signal hcnt : unsigned(9 downto 0);
@@ -60,14 +60,15 @@ architecture arch of vga_controller is
     signal vcnt : unsigned(9 downto 0);
     signal vdisp: std_logic;
 
-begin
+    -- 12-bit color data
+    signal color : std_logic_vector(11 downto 0);
+    signal start_color : std_logic_vector(11 downto 0);
 
-    pxclk : entity work.pulse_gen port map (
-        clk => clk,
-        rst => rst,
-        pulse => pulse25,
-        trig => x"0000003" -- 100MHz/4 => 25MHz
-    );
+    -- track pixel index
+    signal px : unsigned(9 downto 0);
+    signal py : unsigned(8 downto 0); 
+
+begin
 
 
     -- HSYNC and pixel data
@@ -80,6 +81,10 @@ begin
             RED <= x"0";
             GRN <= x"0";
             BLU <= x"0"; 
+
+            px <= (others => '0');
+            py <= (others => '0');
+
         elsif (rising_edge(clk)) then
 
             -- pulse-enabled counter
@@ -101,21 +106,49 @@ begin
                 -- data if between porches and valid line (not in vertical retrace), 
                 -- else zeros
                 if (hcnt >= 96+48 and hcnt < (96+48+640) and vdisp = '1') then
-                    RED <= COLOR(11 downto 8);
-                    GRN <= COLOR(7 downto 4);
-                    BLU <= COLOR(3 downto 0);
+                    RED <= color(11 downto 8);
+                    GRN <= color(7 downto 4);
+                    BLU <= color(3 downto 0);
+                    
+                    px <= px + 1;
                 else 
                     RED <= x"0";
                     GRN <= x"0";
                     BLU <= x"0";
                 end if;
 
+                -- toggle blue/green every 32 px
+                if (px mod 32 = 0) then
+                    if (color = blue) then
+                        color <= green;
+                    else
+                        color <= blue;
+                    end if;
+                end if;
 
             end if;
 
             if (hcnt >= 800) then
                 HS <= '0';
                 hcnt <= (others => '0');
+                px <= (others => '0');
+                py <= py + 1;
+
+                if (py mod 32 = 0 ) then
+                    if (start_color = green) then
+                        start_color <= blue;
+                    else
+                        start_color <= green;
+                    end if;
+                end if;
+
+                color <= start_color;
+
+                if (py >= 521) then
+                    py <= (others => '0');
+                    start_color <= green;
+                end if;
+
             end if;
 
         end if;
@@ -141,6 +174,7 @@ begin
                         vdisp <= '0';
                     else
                         VS <= '1';
+
                     end if;
 
                     -- vdisp when between porches, else retracing
