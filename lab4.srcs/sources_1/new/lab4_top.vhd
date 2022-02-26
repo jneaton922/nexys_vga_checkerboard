@@ -49,8 +49,8 @@ entity lab4_top is
         RED : out std_logic_vector(3 downto 0);
         GRN : out std_logic_vector(3 downto 0);
         BLU : out std_logic_vector(3 downto 0);
-        VS : out std_logic;
-        HS : out std_logic;
+        VS : inout std_logic;
+        HS : inout std_logic;
 
         -- 7 segment signals
         SEG7_CATH : out STD_LOGIC_VECTOR (7 downto 0);

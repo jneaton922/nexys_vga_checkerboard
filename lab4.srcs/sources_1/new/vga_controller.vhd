@@ -38,8 +38,8 @@ entity vga_controller is
         rst : in STD_LOGIC;
         pulse25 : in std_logic;
 
-        HS : out std_logic;
-        VS : out std_logic;
+        HS : inout std_logic;
+        VS : inout std_logic;
         RED : out std_logic_vector(3 downto 0);
         GRN : out std_logic_vector(3 downto 0);
         BLU : out std_logic_vector(3 downto 0)
@@ -64,26 +64,23 @@ architecture arch of vga_controller is
     signal color : std_logic_vector(11 downto 0);
     signal start_color : std_logic_vector(11 downto 0);
 
-    -- track pixel index
-    signal px : unsigned(9 downto 0);
-    signal py : unsigned(8 downto 0); 
-
 begin
 
-
-    -- HSYNC and pixel data
+    -- HSYNC
     process (clk, rst)
     begin
         if (rst = '1') then
             -- shut her down!
             hcnt <= (others => '0');
+            vcnt <= (others => '0');
+
             HS <= '0';
             RED <= x"0";
             GRN <= x"0";
             BLU <= x"0"; 
 
-            px <= (others => '0');
-            py <= (others => '0');
+            vdisp <= '0';
+            VS <= '0';
 
         elsif (rising_edge(clk)) then
 
@@ -94,23 +91,23 @@ begin
                 -- HSYNC if tpw has passed (3.84 us = 96 ticks)
                 if (hcnt < 96) then
                     HS <= '0';
-                    hspulse <= '0';
                 elsif (hcnt = 96) then --pulse to trigger vertical count
                     HS <= '1';
-                    hspulse <= '1';
-                else
-                    HS <= '1';
-                    hspulse <= '0';
+                    vcnt <= vcnt + 1;
+                end if;
+
+                if (vcnt < 2 ) then
+                    VS <= '0';
+                elsif (vcnt = 2) then
+                    VS <= '1';
                 end if;
 
                 -- data if between porches and valid line (not in vertical retrace), 
                 -- else zeros
-                if (hcnt >= 96+48 and hcnt < (96+48+640) and vdisp = '1') then
+                if (hcnt > 144 and hcnt < 784 and vcnt > 31 and vcnt < 511) then
                     RED <= color(11 downto 8);
                     GRN <= color(7 downto 4);
                     BLU <= color(3 downto 0);
-                    
-                    px <= px + 1; -- increment pixel index
                 else 
                     RED <= x"0";
                     GRN <= x"0";
@@ -118,7 +115,7 @@ begin
                 end if;
 
                 -- toggle blue/green every 32 px
-                if (px mod 32 = 0) then
+                if ((hcnt - 96) mod 32 = 0) then
                     if (color = blue) then
                         color <= green;
                     else
@@ -131,70 +128,25 @@ begin
             if (hcnt >= 800) then
                 HS <= '0';
                 hcnt <= (others => '0');
-                px <= (others => '0');
-                py <= py + 1;
 
-                if (py mod 32 = 0 ) then
+                if ((vcnt-2) mod 32 = 0 ) then -- toggle first block every 32 lines, shifted by first 2 dead lines
                     if (start_color = green) then
                         start_color <= blue;
                     else
                         start_color <= green;
                     end if;
                 end if;
-
                 color <= start_color;
-
-                if (py >= 521
-                ) then
-                    py <= (others => '0');
-                    start_color <= green;
-                end if;
-
             end if;
 
-        end if;
-    end process;
-
-    -- VSYNC process, HSYNC-enabled counter;
-    process(clk, rst)
-    begin
-
-        if (rst = '1') then
-            -- shut her down!
-            vcnt <= (others => '0');
-            vdisp <= '0';
-            VS <= '0';
-        elsif (rising_edge(clk)) then
-            if (pulse25 = '1') then
-                if (hspulse = '1') then
-                    vcnt <= vcnt + 1;
-                    
-                    -- vsync if tpw has passed (2 lines)
-                    if (vcnt < 2 ) then
-                        VS <= '0';
-                        vdisp <= '0';
-                    else
-                        VS <= '1';
-
-                    end if;
-
-                    -- vdisp when between porches, else retracing
-                    if (vcnt >= (2+29) and vcnt < (2+29+480)) then
-                        vdisp <= '1';
-                    else
-                        vdisp <= '0';
-                    end if;
-
-                    if (vcnt >= 521) then
-                        vcnt <= (others => '0');
-                        VS <= '0';
-                        vdisp <= '0';
-                    end if;
-                        
-                end if;
+            if (vcnt > 521) then
+                VS <= '0';
+                vcnt <= (others => '0');
+                start_color <= green;
             end if;
-        end if;
 
+
+        end if;
     end process;
 
 end arch;

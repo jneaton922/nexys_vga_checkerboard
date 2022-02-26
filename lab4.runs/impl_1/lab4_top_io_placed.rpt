@@ -1,7 +1,7 @@
 Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2021.2 (lin64) Build 3367213 Tue Oct 19 02:47:39 MDT 2021
-| Date                      : Fri Feb 25 19:30:26 2022
+| Date                      : Sat Feb 26 15:46:19 2022
 | Host                      : yoshi-desktop running 64-bit Ubuntu 20.04.4 LTS
 | Command                   : report_io -file lab4_top_io_placed.rpt
 | Design                    : lab4_top
@@ -63,8 +63,8 @@ Table of Contents
 | B8         |              | High Range | IO_L12P_T1_MRCC_16           | User IO     |             |      16 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | B9         |              | High Range | IO_L11N_T1_SRCC_16           | User IO     |             |      16 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | B10        |              | High Range | VCCO_16                      | VCCO        |             |      16 |            |      |                     |                      |   any** |            |           |          |      |                  |              |                   |              |
-| B11        | HS           | High Range | IO_L4P_T0_15                 | OUTPUT      | LVCMOS33    |      15 |         12 | SLOW |                     |            FP_VTT_50 |         | FIXED      |           |          |      | NONE             |              |                   |              |
-| B12        | VS           | High Range | IO_L3N_T0_DQS_AD1N_15        | OUTPUT      | LVCMOS33    |      15 |         12 | SLOW |                     |            FP_VTT_50 |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| B11        | HS           | High Range | IO_L4P_T0_15                 | BIDIR       | LVCMOS33    |      15 |         12 | SLOW |                     |            FP_VTT_50 |         | FIXED      |           |          |      | NONE             |              |                   |              |
+| B12        | VS           | High Range | IO_L3N_T0_DQS_AD1N_15        | BIDIR       | LVCMOS33    |      15 |         12 | SLOW |                     |            FP_VTT_50 |         | FIXED      |           |          |      | NONE             |              |                   |              |
 | B13        |              | High Range | IO_L2P_T0_AD8P_15            | User IO     |             |      15 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | B14        |              | High Range | IO_L2N_T0_AD8N_15            | User IO     |             |      15 |            |      |                     |                      |         |            |           |          |      |                  |              |                   |              |
 | B15        |              |            | GND                          | GND         |             |         |            |      |                     |                      |     0.0 |            |           |          |      |                  |              |                   |              |
