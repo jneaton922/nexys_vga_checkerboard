@@ -1,7 +1,7 @@
 Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2021.2 (lin64) Build 3367213 Tue Oct 19 02:47:39 MDT 2021
-| Date         : Sat Feb 26 15:45:42 2022
+| Date         : Sun Feb 27 18:05:05 2022
 | Host         : yoshi-desktop running 64-bit Ubuntu 20.04.4 LTS
 | Command      : report_utilization -file lab4_top_utilization_synth.rpt -pb lab4_top_utilization_synth.pb
 | Design       : lab4_top
@@ -56,9 +56,9 @@ Table of Contents
 | 0     |            _ |       Reset |            - |
 | 0     |          Yes |           - |            - |
 | 1     |          Yes |           - |          Set |
-| 82    |          Yes |           - |        Reset |
+| 81    |          Yes |           - |        Reset |
 | 0     |          Yes |         Set |            - |
-| 3     |          Yes |       Reset |            - |
+| 4     |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -147,15 +147,15 @@ Table of Contents
 +----------+------+---------------------+
 | Ref Name | Used | Functional Category |
 +----------+------+---------------------+
-| FDCE     |   82 |        Flop & Latch |
+| FDCE     |   81 |        Flop & Latch |
 | LUT2     |   61 |                 LUT |
 | OBUF     |   30 |                  IO |
 | LUT6     |   26 |                 LUT |
 | LUT3     |   19 |                 LUT |
 | LUT5     |   17 |                 LUT |
-| LUT4     |   15 |                 LUT |
+| LUT4     |   16 |                 LUT |
 | CARRY4   |   14 |          CarryLogic |
-| FDRE     |    3 |        Flop & Latch |
+| FDRE     |    4 |        Flop & Latch |
 | IBUF     |    2 |                  IO |
 | FDPE     |    1 |        Flop & Latch |
 | BUFG     |    1 |               Clock |

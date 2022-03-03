@@ -38,8 +38,11 @@ entity vga_controller is
         rst : in STD_LOGIC;
         pulse25 : in std_logic;
 
-        HS : inout std_logic;
-        VS : inout std_logic;
+        X : in unsigned(5 downto 0);
+        Y : in unsigned(4 downto 0);
+
+        HS : out std_logic;
+        VS : out std_logic;
         RED : out std_logic_vector(3 downto 0);
         GRN : out std_logic_vector(3 downto 0);
         BLU : out std_logic_vector(3 downto 0)
@@ -49,16 +52,15 @@ end vga_controller;
 architecture arch of vga_controller is
 
     -- color definitions
-    constant blue : std_logic_vector(11 downto 0) := x"30f";
-    constant green : std_logic_vector(11 downto 0) := x"179";
+    constant blue : std_logic_vector(11 downto 0) := x"20d";
+    constant green : std_logic_vector(11 downto 0) := x"042";
+    constant red_block : std_logic_vector(11 downto 0) := x"b16";
 
-    -- horizontal counter
+    -- horizontal 10 bit counter
     signal hcnt : unsigned(9 downto 0);
-    signal hspulse : std_logic;
 
-    -- vertical counter
+    -- vertical 10 bit counter
     signal vcnt : unsigned(9 downto 0);
-    signal vdisp: std_logic;
 
     -- 12-bit color data
     signal color : std_logic_vector(11 downto 0);
@@ -70,7 +72,7 @@ begin
     process (clk, rst)
     begin
         if (rst = '1') then
-            -- shut her down!
+            -- shut it down!
             hcnt <= (others => '0');
             vcnt <= (others => '0');
 
@@ -78,8 +80,6 @@ begin
             RED <= x"0";
             GRN <= x"0";
             BLU <= x"0"; 
-
-            vdisp <= '0';
             VS <= '0';
 
         elsif (rising_edge(clk)) then
@@ -114,13 +114,17 @@ begin
                     BLU <= x"0";
                 end if;
 
-                -- toggle blue/green every 32 px
-                if ((hcnt - 96) mod 32 = 0) then
+                -- toggle blue/green every 32 px, offset for blanking and for observed shift in display
+                if ((hcnt - 96 - 16) mod 32 = 0) then
+
+                    -- if we're in the block spot, make it red
+
                     if (color = blue) then
                         color <= green;
                     else
                         color <= blue;
                     end if;
+
                 end if;
 
             end if;
@@ -129,7 +133,7 @@ begin
                 HS <= '0';
                 hcnt <= (others => '0');
 
-                if ((vcnt-2) mod 32 = 0 ) then -- toggle first block every 32 lines, shifted by first 2 dead lines
+                if ((vcnt) mod 32 = 0 ) then -- toggle first block every 32 lines, shifted by first 2 dead lines
                     if (start_color = green) then
                         start_color <= blue;
                     else

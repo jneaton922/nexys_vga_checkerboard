@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1645908309" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/lab4_top.dcp">
-  <File Type="VDS-TIMING-PB" Name="lab4_top_timing_summary_synth.pb"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="lab4_top_timing_summary_synth.rpt"/>
-  <File Type="RDS-DCP" Name="lab4_top.dcp"/>
-  <File Type="RDS-UTIL-PB" Name="lab4_top_utilization_synth.pb"/>
-  <File Type="RDS-UTIL" Name="lab4_top_utilization_synth.rpt"/>
-  <File Type="RDS-PROPCONSTRS" Name="lab4_top_drc_synth.rpt"/>
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1646003072" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/lab4_top.dcp">
   <File Type="RDS-RDS" Name="lab4_top.vds"/>
   <File Type="REPORTS-TCL" Name="lab4_top_reports.tcl"/>
   <File Type="PA-TCL" Name="lab4_top.tcl"/>
+  <File Type="RDS-DCP" Name="lab4_top.dcp"/>
+  <File Type="RDS-UTIL" Name="lab4_top_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="lab4_top_utilization_synth.pb"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
     <Filter Type="Srcs"/>
     <File Path="$PSRCDIR/sources_1/new/pulse_gen.vhd">
@@ -67,9 +64,7 @@
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2021">
-      <Desc>Vivado Synthesis Defaults</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2021"/>
     <Step Id="synth_design"/>
   </Strategy>
 </GenRun>

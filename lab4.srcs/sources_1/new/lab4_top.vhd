@@ -49,8 +49,8 @@ entity lab4_top is
         RED : out std_logic_vector(3 downto 0);
         GRN : out std_logic_vector(3 downto 0);
         BLU : out std_logic_vector(3 downto 0);
-        VS : inout std_logic;
-        HS : inout std_logic;
+        VS : out std_logic;
+        HS : out std_logic;
 
         -- 7 segment signals
         SEG7_CATH : out STD_LOGIC_VECTOR (7 downto 0);
@@ -77,7 +77,22 @@ architecture arch of lab4_top is
      -- 25MHZ pixel clock
     signal pulse25 : std_logic;
 
+    -- track red block index (x 0 to 20, y 0 to 15)
+    signal blockx : unsigned(5 downto 0) := (others => "0");
+    signal blocky : unsigend(4 downto 0) := (others => "0");
 
+    -- debounce counters for each button
+
+    signal u_cnt : unsigned(26 downto 0);
+    signal d_cnt : unsigned(26 downto 0);
+    signal l_cnt : unsigned(26 downto 0);
+
+
+    -- debounced button states
+    signal u_db : std_logic := '0';
+    signal d_db : std_logic := '0';
+    signal l_db : std_logic := '0';
+    signal r_db : std_logic := '0';
 begin
 
     seg7 : entity work.seg7_controller port map (
@@ -113,17 +128,58 @@ begin
         BLU => BLU
     );
 
+    -- debounce all four buttons
+    entity work.debounce port map (
+        clk => clk,
+        rst => reset,
+        button_state => BTNU,
+        debounced => u_db
+    );
+
+    entity work.debounce port map (
+        clk => clk,
+        rst => reset,
+        button_state => BTNL,
+        debounced => l_db
+    );
+
+    entity work.debounce port map (
+        clk => clk,
+        rst => reset,
+        button_state => BTND,
+        debounced => r_db
+    );
+
+    entity work.debounce port map (
+        clk => clk,
+        rst => reset,
+        button_state => BTND,
+        debounced => d_db
+    );
+
+    -- debounce signal generator
     process (clk, RESET_SW)
     begin
         if (RESET_SW = '1') then
+            -- pass along the reset signal
             reset <= '1';
+
+            -- reset block position
+            blockx <= (others => "0");
+            blocky <= (others => "0");
+
         elsif (rising_edge(clk)) then
             -- do stuff
             reset <= '0';
 
+
         end if;
 
     end process;
+
+    
+
+    process 
 
 
     c1 <= x"F";

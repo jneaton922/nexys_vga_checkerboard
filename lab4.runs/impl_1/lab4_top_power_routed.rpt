@@ -1,7 +1,7 @@
 Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2021.2 (lin64) Build 3367213 Tue Oct 19 02:47:39 MDT 2021
-| Date             : Sat Feb 26 15:46:36 2022
+| Date             : Sun Feb 27 18:06:06 2022
 | Host             : yoshi-desktop running 64-bit Ubuntu 20.04.4 LTS
 | Command          : report_power -file lab4_top_power_routed.rpt -pb lab4_top_power_summary_routed.pb -rpx lab4_top_power_routed.rpx
 | Design           : lab4_top
@@ -52,13 +52,13 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |    <0.001 |        3 |       --- |             --- |
-| Slice Logic    |    <0.001 |      253 |       --- |             --- |
+| Clocks         |     0.001 |        3 |       --- |             --- |
+| Slice Logic    |    <0.001 |      252 |       --- |             --- |
 |   LUT as Logic |    <0.001 |      117 |     63400 |            0.18 |
 |   CARRY4       |    <0.001 |       14 |     15850 |            0.09 |
-|   Register     |    <0.001 |       92 |    126800 |            0.07 |
+|   Register     |    <0.001 |       90 |    126800 |            0.07 |
 |   Others       |     0.000 |        9 |       --- |             --- |
-| Signals        |    <0.001 |      161 |       --- |             --- |
+| Signals        |    <0.001 |      159 |       --- |             --- |
 | I/O            |    <0.001 |       32 |       210 |           15.24 |
 | Static Power   |     0.097 |          |           |                 |
 | Total          |     0.099 |          |           |                 |

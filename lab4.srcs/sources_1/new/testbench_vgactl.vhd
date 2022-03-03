@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use work.all;
 
 entity testbench_vgactl is
@@ -38,12 +39,12 @@ architecture model of testbench_vgactl is
     signal BLU    :std_logic_vector(3 downto 0);
     signal HS     :std_logic;
     signal VS     :std_logic; 
-
+    
 begin
 
     -- instantiate the controller entity as dut
     dut : entity vga_controller port map
-    (clk => clk, rst => rst, pulse25 => pulse25, RED=> RED, GRN => GRN, BLU=> BLU, HS => HS, VS=> VS);
+    (clk => clk, rst => rst, pulse25 => pulse25, RED=> RED, GRN => GRN, BLU=> BLU, HS => HS, VS=> VS);  
 
     COLOR(11 downto 8) <= RED;
     COLOR(7 downto 4)  <= GRN;
