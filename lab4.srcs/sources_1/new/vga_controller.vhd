@@ -38,8 +38,8 @@ entity vga_controller is
         rst : in STD_LOGIC;
         pulse25 : in std_logic;
 
-        X : in unsigned(5 downto 0);
-        Y : in unsigned(4 downto 0);
+        X : in unsigned(7 downto 0);
+        Y : in unsigned(7 downto 0);
 
         HS : out std_logic;
         VS : out std_logic;
@@ -58,9 +58,11 @@ architecture arch of vga_controller is
 
     -- horizontal 10 bit counter
     signal hcnt : unsigned(9 downto 0);
+    signal px : unsigned(9 downto 0); -- capture pixel offset for simpler comparisons
 
     -- vertical 10 bit counter
     signal vcnt : unsigned(9 downto 0);
+    signal py : unsigned(9 downto 0); -- capture pixel offset for simpler comparisons
 
     -- 12-bit color data
     signal color : std_logic_vector(11 downto 0);
@@ -102,51 +104,53 @@ begin
                     VS <= '1';
                 end if;
 
+
                 -- data if between porches and valid line (not in vertical retrace), 
                 -- else zeros
                 if (hcnt > 144 and hcnt < 784 and vcnt > 31 and vcnt < 511) then
+                    -- current pixel index
+                    px <= hcnt-144;
+                    py <= vcnt-31;
+
+                    -- 9 downto 5 for x,y index 
+                    if (px(9 downto 5) = X and py(9 downto 5) = Y) then
+                        color <= red_block;
+                    -- bit 5 in counters should tell colors otherwise
+                    elsif (px(5) = '1') then
+                        if (py(5) = '1')then 
+                            color <= blue;
+                        else 
+                            color <= green;
+                        end if;
+                    else 
+                        if (py(5) = '1')then 
+                            color <= green;
+                        else 
+                            color <= blue;
+                        end if;
+                    end if;
+
                     RED <= color(11 downto 8);
                     GRN <= color(7 downto 4);
                     BLU <= color(3 downto 0);
+
                 else 
                     RED <= x"0";
                     GRN <= x"0";
                     BLU <= x"0";
                 end if;
 
-                -- toggle blue/green every 32 px, offset for blanking and for observed shift in display
-                if ((hcnt - 96 - 16) mod 32 = 0) then
-
-                    -- if we're in the block spot, make it red
-
-                    if (color = blue) then
-                        color <= green;
-                    else
-                        color <= blue;
-                    end if;
-
-                end if;
-
             end if;
 
+            -- reset counters at max values
             if (hcnt >= 800) then
                 HS <= '0';
                 hcnt <= (others => '0');
-
-                if ((vcnt) mod 32 = 0 ) then -- toggle first block every 32 lines, shifted by first 2 dead lines
-                    if (start_color = green) then
-                        start_color <= blue;
-                    else
-                        start_color <= green;
-                    end if;
-                end if;
-                color <= start_color;
             end if;
 
             if (vcnt > 521) then
                 VS <= '0';
                 vcnt <= (others => '0');
-                start_color <= green;
             end if;
 
 

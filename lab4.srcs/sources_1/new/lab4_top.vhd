@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -54,7 +54,10 @@ entity lab4_top is
 
         -- 7 segment signals
         SEG7_CATH : out STD_LOGIC_VECTOR (7 downto 0);
-        AN : out STD_LOGIC_VECTOR (7 downto 0)
+        AN : out STD_LOGIC_VECTOR (7 downto 0);
+
+        -- LEDS
+        LED : out std_logic_vector(3 downto 0)
     );
 
 end lab4_top;
@@ -77,18 +80,11 @@ architecture arch of lab4_top is
      -- 25MHZ pixel clock
     signal pulse25 : std_logic;
 
-    -- track red block index (x 0 to 20, y 0 to 15)
-    signal blockx : unsigned(5 downto 0) := (others => "0");
-    signal blocky : unsigend(4 downto 0) := (others => "0");
+    -- track red block index (x 0 to 20, y 0 to 15), 8 bits each for 7-seg convenience
+    signal blockx : unsigned(7 downto 0) := x"0a";
+    signal blocky : unsigned(7 downto 0) := x"07";
 
-    -- debounce counters for each button
-
-    signal u_cnt : unsigned(26 downto 0);
-    signal d_cnt : unsigned(26 downto 0);
-    signal l_cnt : unsigned(26 downto 0);
-
-
-    -- debounced button states
+    -- debounced button pulses
     signal u_db : std_logic := '0';
     signal d_db : std_logic := '0';
     signal l_db : std_logic := '0';
@@ -121,6 +117,8 @@ begin
         clk => clk,
         rst => reset,
         pulse25 => pulse25,
+        x => blockx,
+        y => blocky,
         HS => HS,
         VS => VS,
         RED => RED,
@@ -129,32 +127,32 @@ begin
     );
 
     -- debounce all four buttons
-    entity work.debounce port map (
+    up : entity work.debounce port map (
         clk => clk,
         rst => reset,
         button_state => BTNU,
         debounced => u_db
     );
 
-    entity work.debounce port map (
+    left : entity work.debounce port map (
         clk => clk,
         rst => reset,
         button_state => BTNL,
         debounced => l_db
     );
 
-    entity work.debounce port map (
-        clk => clk,
-        rst => reset,
-        button_state => BTND,
-        debounced => r_db
-    );
-
-    entity work.debounce port map (
+    down : entity work.debounce port map (
         clk => clk,
         rst => reset,
         button_state => BTND,
         debounced => d_db
+    );
+
+    right : entity work.debounce port map (
+        clk => clk,
+        rst => reset,
+        button_state => BTNR,
+        debounced => r_db
     );
 
     -- debounce signal generator
@@ -165,29 +163,63 @@ begin
             reset <= '1';
 
             -- reset block position
-            blockx <= (others => "0");
-            blocky <= (others => "0");
+            blockx <= x"0a";
+            blocky <= x"07";
 
         elsif (rising_edge(clk)) then
-            -- do stuff
+            -- x,y limits are 0,0 to 19,14
+
+            -- top level do stuff
             reset <= '0';
 
+            if (u_db = '1') then
+                -- decrement y, stop at 0
+                if (blocky > 0) then
+                    blocky <= blocky - 1;
+                else
+                    blocky <= (others => '0');
+                end if;
+            end if;
+
+            if (d_db = '1') then
+                -- increment y, stop at 14
+                if (blocky < 14) then
+                    blocky <= blocky + 1;
+                else
+                    blocky <= x"0e";
+                end if;
+            end if;
+
+            if (l_db = '1') then
+                -- decrement x, stop at 0
+                if (blockx > 0) then
+                    blockx <= blockx - 1;
+                else
+                    blockx <= (others => '0');
+                end if;
+            end if;
+
+            if (r_db = '1') then
+                -- increment x, stop at 19
+                if (blockx < 19) then
+                    blockx <= blockx + 1;
+                else
+                    blockx <= x"13";
+                end if;
+            end if;
 
         end if;
 
     end process;
 
-    
+    c2 <= std_logic_vector(blocky(7 downto 4));
+    c1 <= std_logic_vector(blocky(3 downto 0));
 
-    process 
+    c4 <= std_logic_vector(blockx(7 downto 4));
+    c3 <= std_logic_vector(blockx(3 downto 0));
 
-
-    c1 <= x"F";
-    c2 <= x"E";
-    c3 <= x"E";
-    c4 <= x"B";
-    c5 <= x"D";
-    c6 <= x"A";
-    c7 <= x"E";
-    c8 <= x"D";
+    LED(0) <= BTNU;
+    LED(1) <= BTND;
+    LED(2) <= BTNL;
+    LED(3) <= BTNR;
 end arch;
