@@ -143,7 +143,7 @@ begin
             end if;
 
             -- reset counters at max values
-            if (hcnt >= 800) then
+            if (hcnt > 800) then
                 HS <= '0';
                 hcnt <= (others => '0');
             end if;
