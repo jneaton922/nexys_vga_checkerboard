@@ -173,11 +173,11 @@ begin
             reset <= '0';
 
             if (u_db = '1') then
-                -- decrement y, stop at 0
+                -- decrement y, wrap at 0
                 if (blocky > 0) then
                     blocky <= blocky - 1;
                 else
-                    blocky <= (others => '0');
+                    blocky <= x"0e";
                 end if;
             end if;
 
@@ -186,25 +186,25 @@ begin
                 if (blocky < 14) then
                     blocky <= blocky + 1;
                 else
-                    blocky <= x"0e";
+                    blocky <= x"00";
                 end if;
             end if;
 
             if (l_db = '1') then
-                -- decrement x, stop at 0
+                -- decrement x, wrap to 19 at 0
                 if (blockx > 0) then
                     blockx <= blockx - 1;
                 else
-                    blockx <= (others => '0');
+                    blockx <= x"13";
                 end if;
             end if;
 
             if (r_db = '1') then
-                -- increment x, stop at 19
+                -- increment x, wrap to 0 at 19
                 if (blockx < 19) then
                     blockx <= blockx + 1;
                 else
-                    blockx <= x"13";
+                    blockx <= x"00";
                 end if;
             end if;
 
